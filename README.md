@@ -1,70 +1,118 @@
-BioLinkBERT Interactive Demo
-This project allows you to interact with a medical AI model (BioLinkBERT) by asking it multiple-choice medical questions.
+ Running the Demos
+1. The "Test" Demo (Untrained Model)
+This runs the base model without any training (answers may be random).
 
-1. Prerequisites
-Ensure you have your Anaconda environment activated:
+Configure demo.py:
 
-PowerShell
-
-conda activate PBSLM
-2. The "Test" Demo (Untrained)
-If you just want to see the code run (even if the answers are random), use the base model you downloaded manually.
-
-Ensure your demo.py points to the base folder:
-
-Python
-
+python
+# Open demo.py and ensure:
 model_path = "./BioLinkBERT-base"
-Run the script:
+Run the demo:
 
-PowerShell
-
+bash
 python demo.py
-Note: Since this model is untrained, it will likely always guess Option 1 because it hasn't learned how to make decisions yet.
+Note: The untrained model typically always selects Option 1 as it hasn't learned decision-making patterns.
 
-3. The "Smart" Demo (Micro-Trained)
-To make the model actually try to answer questions, you need to run a quick 5-minute training session.
-
+2. The "Smart" Demo (Micro-Trained Model)
 Step A: Run Micro-Training
-Run this command to train the model for just 50 steps (approx. 5-10 mins). This teaches it how to select options other than "Option 1".
+Train the model for 50 steps (5-10 minutes):
 
-PowerShell
+bash
+python -W ignore run_bert_training_eval.py \
+  --model_name_or_path ./BioLinkBERT-base \
+  --dataset_name medqa \
+  --seed 1 \
+  --per_device_train_batch_size 1 \
+  --gradient_accumulation_steps 8 \
+  --shot -1 \
+  --train_split train_singletask_all_qac_eA \
+  --eval_split qta_question_validation_all_qac_eA_medqa \
+  --per_device_eval_batch_size 1 \
+  --train \
+  --output_dir ./results/micro_train \
+  --max_steps 50
+Step B: Update Configuration
+Change line 7 in demo.py:
 
-python -W ignore run_bert_training_eval.py --model_name_or_path ./BioLinkBERT-base --dataset_name medqa --seed 1 --per_device_train_batch_size 1 --gradient_accumulation_steps 8 --shot -1 --train_split train_singletask_all_qac_eA --eval_split qta_question_validation_all_qac_eA_medqa --per_device_eval_batch_size 1 --train --output_dir ./results/micro_train --max_steps 50
-Step B: Point Demo to New Model
-Open demo.py and change line 7 to point to your newly trained folder:
-
-Python
-
-# Change this line:
+python
+# Update to:
 model_path = "./results/micro_train"
-Step C: Run It
-PowerShell
-
+Step C: Run the Enhanced Demo
+bash
 python demo.py
-Now the model should give different answers based on the question!
-
-Sample Questions to Try
-Cardiology:
-
+🧪 Sample Questions to Try
+Cardiology Example:
 Q: A 65-year-old male presents with crushing chest pain radiating to his left arm. ECG shows ST elevation.
 
 Option 1: Acid Reflux
 
-Option 2: Acute Myocardial Infarction
+Option 2: Acute Myocardial Infarction ✓
 
 Option 3: Panic Attack
 
 Option 4: Pneumonia
 
-General:
-
+General Medicine Example:
 Q: A child scrapes his knee and it bleeds. Which cell type stops the bleeding?
 
 Option 1: Neurons
 
-Option 2: Platelets
+Option 2: Platelets ✓
 
 Option 3: White Blood Cells
 
 Option 4: Red Blood Cells
+
+📁 Project Structure
+text
+project-directory/
+├── BioLinkBERT-base/          # Base model (manually downloaded)
+├── results/micro_train/       # Micro-trained model (after training)
+├── demo.py                    # Interactive demo script
+├── run_bert_training_eval.py  # Training script
+└── README.md                  # This file
+⚠️ Troubleshooting
+"Model not found" error
+
+Ensure the BioLinkBERT-base folder exists in the project root
+
+Verify the folder contains: config.json, pytorch_model.bin, vocab.txt
+
+CUDA out of memory
+
+Reduce batch size in training command
+
+Add --no_cuda flag to run on CPU
+
+Module not found errors
+
+Reinstall requirements: pip install -r requirements.txt
+
+Ensure conda environment is activated: conda activate PBSLM
+
+📊 Expected Results
+Untrained Model: Consistently selects Option 1
+
+Micro-Trained Model: Shows improved decision-making with varied answer selection
+
+Performance: Training for 50 steps provides basic pattern recognition
+
+🔧 Advanced Configuration
+To customize training:
+
+bash
+# Adjust training steps
+--max_steps 100
+
+# Change learning rate
+--learning_rate 2e-5
+
+# Use different dataset
+--dataset_name medmcqa
+📚 Additional Resources
+BioLinkBERT Paper
+
+MedQA Dataset
+
+HuggingFace Transformers
+
