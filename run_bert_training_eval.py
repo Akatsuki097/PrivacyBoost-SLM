@@ -1,63 +1,87 @@
-#!/usr/bin/env python
-# coding=utf-8
-# Copyright The HuggingFace Team and The HuggingFace Inc. team. All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-"""
-Fine-tuning a 🤗 Transformers model on multiple choice relying on the accelerate library without using a Trainer.
-"""
-# You can also adapt this script on your own multiple choice task. Pointers for this are left as comments.
-
-
+import sys
 import os
-import argparse
+# Force Python to look in the script's own directory for 'modeling' and 'utils'
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
+
 import json
 import logging
 import math
 import random
+import time
 import shutil
+import argparse
 from fnmatch import fnmatch
-import numpy as np
-import torch
-from torch.utils.data import DataLoader
-import evaluate
-from tqdm.auto import tqdm
 from copy import deepcopy
-import transformers
+from dataclasses import dataclass, field
+from typing import Optional, Union, List, Dict, Tuple
+import numpy as np
+from tqdm import tqdm
+
+# PyTorch & ML
+import torch
+from torch.optim import AdamW
+from torch.utils.data import DataLoader
+from tensorboardX import SummaryWriter
 from accelerate import Accelerator
-from accelerate.utils import set_seed
-from filelock import FileLock
+import datasets
+from datasets import load_dataset
+try:
+    from datasets import load_metric
+except ImportError:
+    from evaluate import load as load_metric
+
+try:
+    import evaluate
+except ImportError:
+    print("Warning: evaluate module not found. Install with: pip install evaluate")
+
+# Transformers
+import transformers
 from transformers import (
     CONFIG_MAPPING,
-    MODEL_MAPPING,
-    AdamW,
+    MODEL_FOR_MASKED_LM_MAPPING,
     AutoConfig,
-    AutoModelForMultipleChoice,
+    AutoModelForMaskedLM,
     AutoTokenizer,
-    SchedulerType,
-    get_scheduler,
+    HfArgumentParser,
+    Trainer,
+    TrainingArguments,
+    is_torch_tpu_available,
+    set_seed,
+    AutoModelForMultipleChoice,
+    get_scheduler
 )
-from tensorboardX import SummaryWriter
-from data import MedQAForBert,MMLUForBert, MedMACQAForBert, HeadQAForBert, DataCollatorForMultipleChoice
-from transformers.utils.versions import require_version
-import time
-from modeling.modeling_bert import BertForMTL
+try:
+    from transformers import SchedulerType
+except ImportError:
+    from transformers.trainer_utils import SchedulerType
+
+# Local Imports (CRITICAL: These must function)
+try:
+    from modeling.modeling_bert import BertForMTL
+    from utils.data_utils import (
+        MedQAForBert, 
+        MedMACQAForBert, 
+        HeadQAForBert, 
+        MMLUForBert, 
+        DataCollatorForMultipleChoice
+    )
+except ImportError as e:
+    print("\nCRITICAL ERROR: Could not import project files!")
+    print(f"Error details: {e}")
+    print("Please make sure the folders 'modeling' and 'utils' exist in this directory.")
+    print(f"Current Directory: {os.getcwd()}")
+    print(f"Script Directory: {current_dir}\n")
+    # We re-raise to stop execution so you see the error immediately
+    raise e 
+
 logger = logging.getLogger(__name__)
-require_version("datasets>=1.8.0", "To fix: pip install -r examples/pytorch/summarization/requirements.txt")
+# # # # # # # # require_version("datasets>=1.8.0", "To fix: pip install -r examples/pytorch/summarization/requirements.txt")
 
 # You should update this to your particular problem to have better documentation of `model_type`
-MODEL_CONFIG_CLASSES = list(MODEL_MAPPING.keys())
-MODEL_TYPES = tuple(conf.model_type for conf in MODEL_CONFIG_CLASSES)
+MODEL_CONFIG_CLASSES = list(CONFIG_MAPPING.keys())
+MODEL_TYPES = tuple(conf for conf in MODEL_CONFIG_CLASSES)
 
 
 

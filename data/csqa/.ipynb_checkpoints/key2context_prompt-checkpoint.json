@@ -1,0 +1,37 @@
+[
+    {
+        "Keywords": "fountain pen, people, ink, absorb, pen, hand done, extra, use, fountain",
+        "Answer Choices": "(a)shirt pocket (b) calligrapher's hand (c) inkwell (d) desk drawer (e) blotter",
+        "Context": "Fountain pens need to be filled with ink for writing. Extra ink should be absorbed using special tools.\n(a): A fountain pen can be conveniently carried in a shirt pocket.  It is not associated with the tool to absorb extra ink from fountain pens.\n(b): Calligraphers use fountain pens to create stunning handwriting.  It is not associated with the tool to absorb extra ink from fountain pens.\n(c): An inkwell serves as a container for the ink used in a fountain pen. It is not associated with the tool to absorb extra ink from fountain pens.\n(d): A fountain pen can be kept safely in a desk drawer.  It is not associated with the tool to absorb extra ink from fountain pens.\n(e): Blotters are designed to absorb excess ink from pens.\nTherefore, the answer is (e)."
+    },
+    {
+        "Keywords": "fox, forest, walk, look, city",
+        "Answer Choices": "(a) pretty flowers (b) hen house (c) natural habitat (d) storybook (e) dense forest",
+        "Context": "Foxes are animals that typically live in forests. They walk from the city to the forest to look for their living place.\n(a): Pretty flowers are in forests. It is not a reason for a fox walking into the forest.\n(b): Foxes sometimes prey on chickens in hen houses. It is not a reason for a fox to walk into the forest.\n(c): Forests are the natural habitat of foxes. Foxes walk from city to forest to look for their natural habitat.\n(d): Forests and foxes are common subjects in storybooks. It is not a reason for fox walking to the forest.\n(e): Dense forest is a type or category of forests characterized by having a high density of trees and vegetation.\nTherefore, the answer is (c)."
+    },
+    {
+        "Keywords": "grape, put, check",
+        "Answer Choices": "(a) mouth (b) grocery cart (c) super market (d) fruit basket (e) fruit market",
+        "Context": "Grapes need to be put into a place for checking out.\n(a): Grapes can be eaten by mouth. It is not a place to put grapes for checking out.\n(b): Grapes can be brought during grocery shopping and people put groceries into grocery carts before checking out.\n(c): Super markets sell grapes. It is not a place to put grapes for checking out.\n(d): Fruit markets sell grapes. It is not a place to put grapes for checking out.\n(e): Fruit baskets are often used as gifts to hold and present a variety of fresh grapes. It is not a place to put grapes for checking out.\nTherefore, the answer is (b)."
+    },
+    {
+        "Keywords": "drawstring bag, head, woman, bag, drawstring, check, baggage",
+        "Answer Choices": "(a) garbage can (b) military (c) jewelry store (d) safe (e) airport",
+        "Context": "A  woman can check baggage such as a drawstring bag at the check-in counter.\n(a): A garbage can is a container that is specifically designed to hold and contain trash or waste materials.  It is not related to the context.\n(b): military refers to the armed forces of a country, which is responsible for defending the nation and its interests against external threats. It is not a place where a woman can check bags.\n(c): Jewelry stores sell Jewelry. It is not a typical place to check baggage.\n(d): Check baggage could keep the bag safe.\n(e): Airport is a place where the woman can check her drawstring bag as baggage at the check-in-counter.\nTherefore, the answer is (e)."
+    },
+    {
+        "Keywords": "cable, entertainment, home, require, equipment",
+        "Answer Choices": "(a) radio shack (b) substation (c) television (d) cabinet (e) desk",
+        "Context": "A cable transmits electricity or information and data to home entertainment equipment that requires electricity.\n(a): Radio Shack is a retailer that sells cable. It is not a home entertainment equipment used cable.\n(b): Cables are used to transmit electrical energy between substations and other parts of the electrical power system. It is not a home entertainment equipment used cable.\n(c): Television is a type of home electric entertainment equipment that requires cable.\n(d): Cabinet is a place to store cable. It is not a home entertainment equipment used cable.\n(e): Desk with built-in cable management features can help keep cables tidy. It is not a home entertainment equipment used cable.\nTherefore, the answer is (c)."
+    },
+    {
+        "Keywords": "people, populate, might, may, sammy, go",
+        "Answer Choices": "(a) populated areas (b) race track (c) desert (d) apartment (e) roadblock",
+        "Context": "People may like to go to places where people populate together.\n(a): Populated areas are locations where people gather and live in close proximity to each other.\n(b): Deserts are inhospitable environments for people. It is not a place where people populate together.\n(c): People go to race competitions on the race track.\n(d): Apartments serve as living spaces for people. It is not a place where people populate together.\n(e): Roadblocks are structures set up to restrict or regulate the movement of people and vehicles. It is not a place where people populate together.\nTherefore, the answer is (a)."
+    },
+    {
+        "Keywords": "highway, maps, replace, street, google, map, highway, gps, service",
+        "Answer Choices": "(a) united states (b) mexico (c) countryside (d) atlas (e) oceans",
+        "Context": "Google Maps and GPS services have replaced traditional physical maps for navigating highways and streets.\n(a): People in the United States use Google Maps and GPS services to navigate highways and streets. It is not the tool that GPS replaced with.\n(b): People in Mexico use Google Maps and GPS services to navigate highways and streets. It is not the tool that GPS replaced with.\n(c): Google Maps and GPS services cover the countryside. It is not the tool that GPS replaced with.\n(d): Google Maps and GPS services have replaced traditional physical maps for navigating highways and streets. Atlases are examples of traditional physical maps.\n(e): Google Maps and GPS services cover the oceans and are commonly used in marine navigation. It is not the tool that GPS replaced with.\nTherefore, the answer is (d)."
+    }
+]
