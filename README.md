@@ -1,105 +1,70 @@
-# PrivacyBoost-SLM
+BioLinkBERT Interactive Demo
+This project allows you to interact with a medical AI model (BioLinkBERT) by asking it multiple-choice medical questions.
 
-## Set up environment and data
+1. Prerequisites
+Ensure you have your Anaconda environment activated:
 
-### Environment
-Run the following commands to create a conda environment:
-```bash
-conda create -n PBSLM python=3.7
-source activate PBSLM
-pip install -r requirements.txt
-```
+PowerShell
 
-### Dataset
+conda activate PBSLM
+2. The "Test" Demo (Untrained)
+If you just want to see the code run (even if the answers are random), use the base model you downloaded manually.
 
-You can download the generated context and processed dataset (if not directly available from Hugging Face) on which we evaluated our method from [here](https://drive.google.com/file/d/1JPtOkqpku540NL1wQLtWJkuGWIs2HfA0/view?usp=sharing). Simply download this zip file and extract its contents.
-This includes:
-#### Biomedical domain: [MedQA-USMLE](https://github.com/jind11/MedQA), [HEADQA](https://github.com/aghie/head-qa), [MedMCQA](https://medmcqa.github.io/), and [MMLU-professional medicine](https://github.com/hendrycks/test).
-#### General domain: [CommonSenseQA](https://www.tau-nlp.sites.tau.ac.il/commonsenseqa) and [OpenbookQA](https://allenai.org/data/open-book-qa).
+Ensure your demo.py points to the base folder:
 
+Python
 
-### Resulting file structure
+model_path = "./BioLinkBERT-base"
+Run the script:
 
-The resulting file structure should look like this:
+PowerShell
 
-```plain
-.
-├── README.md
-├── data/
-    ├── MedQA/  
-        ├── apicall/             (prompts,keywords for GPT 3.5 API context generation)
-        ├── context/             (genearted context for SLM training)
-        ├── ...
-    ├── headqa/
-    ├── medmc/
-    ├── csqa/
-    └── obqa/
-```
+python demo.py
+Note: Since this model is untrained, it will likely always guess Option 1 because it hasn't learned how to make decisions yet.
 
+3. The "Smart" Demo (Micro-Trained)
+To make the model actually try to answer questions, you need to run a quick 5-minute training session.
 
-To generate context on your own, you can use the `api_call.sh`. To do this, follow the steps below:
-- Set `dataset_name` to the desired dataset, for example: `{medqa headqa medmcqa}`.
-- Set `split` to the desired dataset split, `{train validation|dev test}`.
-- Specify the `start_idx` and `end_idx` to define the starting and ending index of the dataset you want to iterate through.
-- Call the OpenAI API with the configured settings.
+Step A: Run Micro-Training
+Run this command to train the model for just 50 steps (approx. 5-10 mins). This teaches it how to select options other than "Option 1".
 
-## Experiment results
+PowerShell
 
-###  Full-training 
+python -W ignore run_bert_training_eval.py --model_name_or_path ./BioLinkBERT-base --dataset_name medqa --seed 1 --per_device_train_batch_size 1 --gradient_accumulation_steps 8 --shot -1 --train_split train_singletask_all_qac_eA --eval_split qta_question_validation_all_qac_eA_medqa --per_device_eval_batch_size 1 --train --output_dir ./results/micro_train --max_steps 50
+Step B: Point Demo to New Model
+Open demo.py and change line 7 to point to your newly trained folder:
 
-#### BioLinkBert
-To evaluate the performance of the Fine-Tuning with Context (FTC) using BioLinkBert-Base as the backbone on MedQA, HEADQA and MedMCQA, run
-```
-sh run_training_eval_bert.sh 
-```
+Python
 
-To evaluate the performance using BioLinkBert-Large, replace the `model_name_or_path` argument with "michiyasunaga/BioLinkBERT-large" in the previous commands.
+# Change this line:
+model_path = "./results/micro_train"
+Step C: Run It
+PowerShell
 
-#### BioMedLM
-To directly evaluate the performance of the FTC using BioMedLM as the backbone on various datasets, we upload the BioMedLM checkpoints [here](https://drive.google.com/file/d/1gB-V6D_3xaRaYDkUrdUhJE8j6RQjNHou/view?usp=sharing). Simply download this zip file and unzip its contents. Then follow the instructions below to adpot the fine-tuned model.
-```
-sh run_training_eval_gpt.sh 
-```
+python demo.py
+Now the model should give different answers based on the question!
 
-#### T5
-To further evaluate the performance on general domain e.g. CommonsenseQA and OpenbookQA dataset, run
+Sample Questions to Try
+Cardiology:
 
-```
-sh run_training_eval_t5.sh 
-```
+Q: A 65-year-old male presents with crushing chest pain radiating to his left arm. ECG shows ST elevation.
 
+Option 1: Acid Reflux
 
-###  Few-shot setting
+Option 2: Acute Myocardial Infarction
 
-Change the `shot= {100 200 500}` to run experiments in few-shot setting. For example, to evluate few-shot performance on MedQA dataset with BioLinkBert-Base as backbone, run
-```
-sh run_training_eval_bert_fewshot.sh 
-```
+Option 3: Panic Attack
 
-###  Out-of-Domain (OOD) Performance
-To evaluate the Out-of-Domain (OOD) performance of FTC using BioLinkBERT-Base as the backbone, without additional training, you need to modify the script to use the best performance model from the source domain and directly apply it to the target domain. You can do this by changing the `dataset_name`  to the target domain name (e.g.,  `{medqa headqa medmcqa mmlu}` ) and `input_dataset_name` to the source domain name (e.g., `{medqa headqa medmcqa}`). For example, run `medqa` -> `mmlu`:
+Option 4: Pneumonia
 
-```
-run_training_eval_bert_OOD.sh
-```
+General:
 
+Q: A child scrapes his knee and it bleeds. Which cell type stops the bleeding?
 
+Option 1: Neurons
 
-## Citation
+Option 2: Platelets
 
-If you found this repository useful, please consider cite our paper:
+Option 3: White Blood Cells
 
-```bibtex
-@misc{zhang2023enhancing,
-      title={Enhancing Small Medical Learners with Privacy-preserving Contextual Prompting}, 
-      author={Xinlu Zhang and Shiyang Li and Xianjun Yang and Chenxin Tian and Yao Qin and Linda Ruth Petzold},
-      year={2023},
-      eprint={2305.12723},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL}
-}
-```
-## Acknowledgements
-
-We would like to express our gratitude to Zhiyu Chen from Meta Reality Labs, Ming Yi, and Hong Wang from the Computer Science Department at UCSB, as well as the anonymous reviewers, for their invaluable feedback. Additionally, we extend our thanks to Rachael A Callcut and Anamaria J Roble for their insightful discussions and guidance on medical prompt designs. Furthermore, we gratefully acknowledge the generous financial support provided by the National Institutes for Health (NIH) grant NIH 7R01HL149670.
-
+Option 4: Red Blood Cells
